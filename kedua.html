@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tarik Tambang MVC Laravel - SMK Kelas 11</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.14), transparent 25%),
+        linear-gradient(160deg, #0f172a, #1d4ed8 120%);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      opacity: 0.92;
+      line-height: 1.6;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
+      margin-bottom: 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.big {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1.05rem;
+      background: #ffd43b;
+      color: #203040;
+    }
+
+    .btn.primary {
+      background: #ffd43b;
+      color: #203040;
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+
+    .rules {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .rule-box {
+      background: rgba(0, 0, 0, 0.22);
+      border-radius: 14px;
+      padding: 12px;
+      line-height: 1.6;
+    }
+
+    .rule-box h3 {
+      color: #ffd43b;
+      margin-bottom: 6px;
+    }
+
+    .rule-box ul {
+      padding-left: 18px;
+    }
+
+    .rule-box li {
+      margin: 5px 0;
+    }
+
+    .mvc-mini {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mvc-card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .mvc-card strong {
+      display: block;
+      color: #ffd43b;
+      margin-bottom: 5px;
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .chip {
+      background: rgba(0, 0, 0, 0.22);
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .chip span {
+      display: block;
+      font-size: 0.8rem;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+
+    .chip strong {
+      font-size: 1.15rem;
+      color: #ffd43b;
+    }
+
+    .arena {
+      display: grid;
+      grid-template-columns: 80px 1fr 80px;
+      align-items: center;
+      gap: 10px;
+      background:
+        linear-gradient(90deg,
+          rgba(34, 197, 94, 0.20),
+          rgba(255, 255, 255, 0.06) 50%,
+          rgba(239, 68, 68, 0.20));
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .team {
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .team .emoji {
+      display: block;
+      font-size: 2.6rem;
+      margin-bottom: 5px;
+    }
+
+    .team .label {
+      display: block;
+      font-size: 0.85rem;
+      line-height: 1.3;
+    }
+
+    .team.left .label {
+      color: #86efac;
+    }
+
+    .team.right .label {
+      color: #fca5a5;
+    }
+
+    .track {
+      position: relative;
+      height: 76px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .center-line {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: rgba(255, 255, 255, 0.42);
+      transform: translateX(-50%);
+    }
+
+    .rope {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 12px;
+      transform: translateY(-50%);
+      background: repeating-linear-gradient(
+        90deg,
+        #b45309 0 18px,
+        #92400e 18px 36px
+      );
+      border-radius: 999px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .flag {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      transition: left 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    }
+
+    .question-card {
+      background: rgba(0, 0, 0, 0.20);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.98rem;
+      transition: 0.2s;
+    }
+
+    .option:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .option:disabled {
+      cursor: default;
+      opacity: 0.96;
+    }
+
+    .option .key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      font-weight: 800;
+      flex: 0 0 30px;
+    }
+
+    .option.correct {
+      background: rgba(34, 197, 94, 0.35);
+      border-color: #22c55e;
+    }
+
+    .option.wrong {
+      background: rgba(239, 68, 68, 0.35);
+      border-color: #ef4444;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      line-height: 1.6;
+    }
+
+    .feedback.success {
+      background: rgba(34, 197, 94, 0.25);
+      border: 1px solid rgba(34, 197, 94, 0.7);
+    }
+
+    .feedback.error {
+      background: rgba(239, 68, 68, 0.25);
+      border: 1px solid rgba(239, 68, 68, 0.7);
+    }
+
+    .controls {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .result-emoji {
+      font-size: 4rem;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .result-title {
+      text-align: center;
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+    }
+
+    .result-message {
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      opacity: 0.95;
+    }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .result-stats div {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .result-stats span {
+      display: block;
+      font-size: 0.8rem;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+
+    .result-stats strong {
+      font-size: 1.2rem;
+      color: #ffd43b;
+    }
+
+    .result-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .team.left.pull .emoji {
+      animation: pullLeft 0.8s ease;
+    }
+
+    .team.right.pull .emoji {
+      animation: pullRight 0.8s ease;
+    }
+
+    @keyframes pullLeft {
+      0% { transform: translateX(0) rotate(0deg); }
+      30% { transform: translateX(-10px) rotate(-8deg) scale(1.08); }
+      100% { transform: translateX(0) rotate(0deg); }
+    }
+
+    @keyframes pullRight {
+      0% { transform: translateX(0) rotate(0deg); }
+      30% { transform: translateX(10px) rotate(8deg) scale(1.08); }
+      100% { transform: translateX(0) rotate(0deg); }
+    }
+
+    @media (max-width: 640px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .hud {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .arena {
+        grid-template-columns: 52px 1fr 52px;
+        padding: 10px;
+      }
+
+      .team .emoji {
+        font-size: 1.9rem;
+      }
+
+      .team .label {
+        font-size: 0.72rem;
+      }
+
+      .mvc-mini,
+      .result-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .question-text {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🪢 Tarik Tambang MVC Laravel</h1>
+      <p>Game kuis pengenalan PHP Framework Laravel untuk SMK Kelas 11</p>
+    </header>
+
+    <!-- MENU AWAL -->
+    <section id="startScreen" class="panel">
+      <div class="rules">
+        <div class="rule-box">
+          <h3>🎯 Cara Bermain</h3>
+          <ul>
+            <li>Tim kiri adalah <strong>Siswa</strong>, tim kanan adalah <strong>Komputer</strong>.</li>
+            <li>Jawaban benar akan menarik tali ke <strong>kiri</strong>.</li>
+            <li>Jawaban salah akan membuat tali bergerak ke <strong>kanan</strong>.</li>
+            <li>Terdapat <strong>5 pertanyaan</strong> tentang konsep MVC pada Laravel.</li>
+            <li>Siswa menang jika <strong>semua pertanyaan dijawab benar</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="rule-box">
+          <h3>📚 Materi Singkat</h3>
+          <p>
+            Laravel adalah framework PHP yang menggunakan pola arsitektur MVC.
+          </p>
+          <div class="mvc-mini">
+            <div class="mvc-card">
+              <strong>Model</strong>
+              Mengelola data, aturan bisnis, dan hubungan ke database.
+            </div>
+            <div class="mvc-card">
+              <strong>View</strong>
+              Menampilkan tampilan atau antarmuka kepada pengguna.
+            </div>
+            <div class="mvc-card">
+              <strong>Controller</strong>
+              Menerima request dan mengatur alur logika aplikasi.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="startBtn" class="btn big">🎮 Mulai Tarik Tambang</button>
+    </section>
+
+    <!-- GAME -->
+    <section id="gameScreen" class="panel hidden">
+      <div class="hud">
+        <div class="chip">
+          <span>Soal</span>
+          <strong id="questionNumber">1/5</strong>
+        </div>
+        <div class="chip">
+          <span>Benar</span>
+          <strong id="correctCount">0</strong>
+        </div>
+        <div class="chip">
+          <span>Salah</span>
+          <strong id="wrongCount">0</strong>
+        </div>
+        <div class="chip">
+          <span>Arah Tali</span>
+          <strong id="ropeDirection">Tengah</strong>
+        </div>
+      </div>
+
+      <div class="arena">
+        <div class="team left" id="leftTeam">
+          <span class="emoji">🧑‍🎓</span>
+          <span class="label">SISWA</span>
+        </div>
+
+        <div class="track">
+          <div class="center-line"></div>
+          <div class="rope"></div>
+          <div id="flag" class="flag">🚩</div>
+        </div>
+
+        <div class="team right" id="rightTeam">
+          <span class="emoji">🤖</span>
+          <span class="label">KOMPUTER</span>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div id="questionText" class="question-text"></div>
+        <div id="options" class="options"></div>
+
+        <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+
+        <div class="controls">
+          <button id="nextBtn" class="btn primary hidden" type="button">Lanjut ➡</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HASIL -->
+    <section id="resultScreen" class="panel hidden">
+      <div id="resultEmoji" class="result-emoji"></div>
+      <h2 id="resultTitle" class="result-title"></h2>
+      <p id="resultMessage" class="result-message"></p>
+
+      <div id="resultStats" class="result-stats"></div>
+
+      <div class="result-actions">
+        <button id="restartBtn" class="btn big" type="button">🔁 Main Lagi</button>
+        <button id="menuBtn" class="btn ghost" type="button">🏠 Kembali ke Menu</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /**
+     * Atur kemenangan di sini.
+     * true  = siswa menang hanya jika semua jawaban benar.
+     * false = siswa menang jika posisi akhir tali lebih ke kiri
+     *         (artinya lebih banyak jawaban benar daripada salah).
+     */
+    const MENANG_JIKA_SEMUA_BENAR = true;
+
+    const QUESTIONS = [
+      {
+        text: "Framework Laravel pada PHP menggunakan pola arsitektur yang memisahkan logika aplikasi. Pola tersebut adalah...",
+        options: [
+          { text: "MVC", correct: true },
+          { text: "OOP", correct: false },
+          { text: "CRUD", correct: false },
+          { text: "API", correct: false }
+        ],
+        explanation: "Laravel menggunakan pola MVC (Model-View-Controller) agar struktur kode lebih rapi, terorganisir, dan mudah dikembangkan."
+      },
+      {
+        text: "Kepanjangan dari MVC adalah...",
+        options: [
+          { text: "Model View Controller", correct: true },
+          { text: "Model Visual Component", correct: false },
+          { text: "Main View Controller", correct: false },
+          { text: "Model Viewer Control", correct: false }
+        ],
+        explanation: "MVC terdiri dari Model untuk data, View untuk tampilan, dan Controller untuk pengatur alur aplikasi."
+      },
+      {
+        text: "Komponen MVC yang bertugas menampilkan tampilan atau antarmuka kepada pengguna adalah...",
+        options: [
+          { text: "View", correct: true },
+          { text: "Model", correct: false },
+          { text: "Controller", correct: false },
+          { text: "Middleware", correct: false }
+        ],
+        explanation: "View adalah bagian yang menampilkan halaman web. Pada Laravel, View biasanya dibuat menggunakan Blade."
+      },
+      {
+        text: "Komponen MVC yang biasanya mengelola data, aturan bisnis, dan hubungan ke database adalah...",
+        options: [
+          { text: "Model", correct: true },
+          { text: "View", correct: false },
+          { text: "Controller", correct: false },
+          { text: "Route", correct: false }
+        ],
+        explanation: "Model bertugas mengelola data. Pada Laravel, Model biasanya menggunakan Eloquent ORM untuk berhubungan dengan database."
+      },
+      {
+        text: "Komponen MVC yang menerima request dari pengguna lalu mengatur logika dan alur aplikasi adalah...",
+        options: [
+          { text: "Controller", correct: true },
+          { text: "View", correct: false },
+          { text: "Seeder", correct: false },
+          { text: "Migration", correct: false }
+        ],
+        explanation: "Controller menerima request, memproses logika, mengambil data dari Model jika diperlukan, lalu meneruskannya ke View."
+      }
+    ];
+
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const resultScreen = document.getElementById("resultScreen");
+
+    const startBtn = document.getElementById("startBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const menuBtn = document.getElementById("menuBtn");
+
+    const questionNumber = document.getElementById("questionNumber");
+    const correctCount = document.getElementById("correctCount");
+    const wrongCount = document.getElementById("wrongCount");
+    const ropeDirection = document.getElementById("ropeDirection");
+
+    const questionText = document.getElementById("questionText");
+    const options = document.getElementById("options");
+    const feedback = document.getElementById("feedback");
+
+    const leftTeam = document.getElementById("leftTeam");
+    const rightTeam = document.getElementById("rightTeam");
+    const flag = document.getElementById("flag");
+
+    const resultEmoji = document.getElementById("resultEmoji");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultMessage = document.getElementById("resultMessage");
+    const resultStats = document.getElementById("resultStats");
+
+    let currentQuestion = 0;
+    let correctTotal = 0;
+    let wrongTotal = 0;
+    let ropePosition = 0; // negatif = kiri, positif = kanan
+    let answered = false;
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function showScreen(screen) {
+      startScreen.classList.add("hidden");
+      gameScreen.classList.add("hidden");
+      resultScreen.classList.add("hidden");
+      screen.classList.remove("hidden");
+    }
+
+    function ropeDirectionText() {
+      if (ropePosition < 0) return "Ke Kiri";
+      if (ropePosition > 0) return "Ke Kanan";
+      return "Tengah";
+    }
+
+    function updateHUD() {
+      questionNumber.textContent = `${currentQuestion + 1}/${QUESTIONS.length}`;
+      correctCount.textContent = correctTotal;
+      wrongCount.textContent = wrongTotal;
+      ropeDirection.textContent = ropeDirectionText();
+    }
+
+    function updateRope() {
+      let percent = 50 + ropePosition * 8;
+
+      if (percent < 10) percent = 10;
+      if (percent > 90) percent = 90;
+
+      flag.style.left = percent + "%";
+    }
+
+    function animateTeam(side) {
+      leftTeam.classList.remove("pull");
+      rightTeam.classList.remove("pull");
+
+      void leftTeam.offsetWidth;
+
+      if (side === "left") {
+        leftTeam.classList.add("pull");
+      } else {
+        rightTeam.classList.add("pull");
+      }
+
+      setTimeout(() => {
+        leftTeam.classList.remove("pull");
+        rightTeam.classList.remove("pull");
+      }, 800);
+    }
+
+    function renderQuestion() {
+      answered = false;
+      const q = QUESTIONS[currentQuestion];
+
+      questionNumber.textContent = `${currentQuestion + 1}/${QUESTIONS.length}`;
+      questionText.textContent = q.text;
+      options.innerHTML = "";
+      feedback.className = "feedback hidden";
+      feedback.innerHTML = "";
+      nextBtn.classList.add("hidden");
+      nextBtn.textContent = currentQuestion === QUESTIONS.length - 1
+        ? "🏁 Lihat Hasil"
+        : "Lanjut ➡";
+
+      const shuffledOptions = shuffle(q.options);
+
+      shuffledOptions.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "option";
+        button.dataset.correct = option.correct;
+
+        const key = document.createElement("span");
+        key.className = "key";
+        key.textContent = String.fromCharCode(65 + index);
+
+        const text = document.createElement("span");
+        text.textContent = option.text;
+
+        button.appendChild(key);
+        button.appendChild(text);
+
+        button.addEventListener("click", () => selectAnswer(button, option.correct, q));
+
+        options.appendChild(button);
+      });
+
+      updateHUD();
+    }
+
+    function selectAnswer(button, isCorrect, question) {
+      if (answered) return;
+
+      answered = true;
+
+      const allButtons = [...options.querySelectorAll(".option")];
+      allButtons.forEach(btn => btn.disabled = true);
+
+      if (isCorrect) {
+        correctTotal++;
+        ropePosition--;
+        button.classList.add("correct");
+        animateTeam("left");
+
+        feedback.className = "feedback success";
+        feedback.innerHTML = `
+          <strong>✅ Benar! Tali tertarik ke kiri.</strong><br>
+          ${question.explanation}
+        `;
+      } else {
+        wrongTotal++;
+        ropePosition++;
+        button.classList.add("wrong");
+        animateTeam("right");
+
+        allButtons.forEach(btn => {
+          if (btn.dataset.correct === "true") {
+            btn.classList.add("correct");
+          }
+        });
+
+        feedback.className = "feedback error";
+        feedback.innerHTML = `
+          <strong>❌ Salah! Tali bergerak ke kanan.</strong><br>
+          Jawaban yang benar: <strong>${
+            question.options.find(opt => opt.correct).text
+          }</strong><br>
+          ${question.explanation}
+        `;
+      }
+
+      updateHUD();
+      updateRope();
+      nextBtn.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < QUESTIONS.length - 1) {
+        currentQuestion++;
+        renderQuestion();
+      } else {
+        finishGame();
+      }
+    }
+
+    function startGame() {
+      currentQuestion = 0;
+      correctTotal = 0;
+      wrongTotal = 0;
+      ropePosition = 0;
+      answered = false;
+
+      showScreen(gameScreen);
+      updateHUD();
+      updateRope();
+      renderQuestion();
+    }
+
+    function finishGame() {
+      let siswaMenang = false;
+      let emoji = "";
+      let title = "";
+      let message = "";
+
+      if (MENANG_JIKA_SEMUA_BENAR) {
+        siswaMenang = correctTotal === QUESTIONS.length;
+
+        if (siswaMenang) {
+          emoji = "🏆";
+          title = "Tim Siswa Menang!";
+          message = "Luar biasa! Semua pertanyaan dijawab benar. Tali berhasil ditarik penuh ke arah siswa.";
+        } else {
+          emoji = "🤖";
+          title = "Tim Komputer Menang!";
+          message = "Belum berhasil. Dalam aturan game ini, siswa harus menjawab semua pertanyaan dengan benar. Coba lagi ya!";
+        }
+      } else {
+        if (ropePosition < 0) {
+          siswaMenang = true;
+          emoji = "🏆";
+          title = "Tim Siswa Menang!";
+          message = "Hebat! Jawaban benar lebih banyak, sehingga tali berhasil condong ke arah siswa.";
+        } else if (ropePosition > 0) {
+          siswaMenang = false;
+          emoji = "🤖";
+          title = "Tim Komputer Menang!";
+          message = "Sayang sekali. Jawaban salah membuat tali lebih condong ke arah komputer.";
+        } else {
+          siswaMenang = false;
+          emoji = "🤝";
+          title = "Seri!";
+          message = "Kekuatan seimbang. Coba lagi untuk menarik tali ke arah siswa.";
+        }
+      }
+
+      resultEmoji.textContent = emoji;
+      resultTitle.textContent = title;
+      resultMessage.textContent = message;
+
+      resultStats.innerHTML = `
+        <div>
+          <span>Benar</span>
+          <strong>${correctTotal}</strong>
+        </div>
+        <div>
+          <span>Salah</span>
+          <strong>${wrongTotal}</strong>
+        </div>
+        <div>
+          <span>Posisi Tali</span>
+          <strong>${ropeDirectionText()}</strong>
+        </div>
+      `;
+
+      showScreen(resultScreen);
+    }
+
+    startBtn.addEventListener("click", startGame);
+    nextBtn.addEventListener("click", nextQuestion);
+    restartBtn.addEventListener("click", startGame);
+    menuBtn.addEventListener("click", () => showScreen(startScreen));
+  </script>
+</body>
+</html>
