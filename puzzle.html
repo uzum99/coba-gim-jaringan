@@ -325,7 +325,6 @@ const LEVELS=[
    {q:'Keyword JavaScript untuk mendeklarasikan variabel yang nilainya TIDAK dapat diubah adalah …',a:'CONST',snip:'??? PI = 3.14;  // tidak bisa diubah lagi'},
    {q:'Properti Flexbox untuk meratakan item pada sumbu utama:  justify- …',a:'CONTENT',snip:'display:flex; justify-???:center;'}]}
 ];
-const COLOR_MAP={'#3fe0a0':'mint'};
 const $=s=>document.querySelector(s);
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -406,9 +405,10 @@ function startLevel(i){
 }
 
 function loadPuzzle(qi){
-  G.qi=qi; G.hints=1; G.hintUsedPuzzle=false; G.busy=false; G.placed=[];
+  G.qi=qi; G.hints=1; G.hintUsedPuzzle=false; G.busy=false;
   const pz=LEVELS[G.lv].puzzles[qi];
   G.ans=pz.a;
+  G.placed=new Array(G.ans.length).fill(null);   // ✅ FIX: slot jawaban disiapkan
   $('#puzzleCard').classList.toggle('small',G.ans.length>9);
   $('#pNum').textContent=`PUZZLE ${qi+1}/3`;
   $('#pPts').textContent=`+${LEVELS[G.lv].base} PTS`;
@@ -417,11 +417,11 @@ function loadPuzzle(qi){
   $('#pSnip').innerHTML=esc(pz.snip).replace(/\?\?\?/g,'<span class="qq">????</span>');
   slots.innerHTML='';
   for(let k=0;k<G.ans.length;k++){const d=document.createElement('div');d.className='slot';slots.appendChild(d);}
-  // huruf + pengecoh
+  // huruf jawaban + huruf pengecoh
   const letters=G.ans.split('').concat(distractors(G.ans,LEVELS[G.lv].extra));
   shuffle(letters);
   tray.innerHTML='';
-  letters.forEach(l=>{const t=document.createElement('button');t.className='tile';t.textContent=l;t.dataset.l=l;tray.appendChild(t);});
+  letters.forEach(l=>{const t=document.createElement('button');t.type='button';t.className='tile';t.textContent=l;t.dataset.l=l;tray.appendChild(t);});
   drawDots(qi,qi);
   renderHearts();
   const bh=$('#btnHint');bh.disabled=false;bh.textContent='💡 PETUNJUK (1)';
@@ -461,12 +461,14 @@ function placeTile(t,i){
   slots.children[i].appendChild(t);
   t.classList.add('in');
   G.placed[i]=t;
+  t.blur();   // ✅ FIX: lepas fokus tombol
 }
 function returnTile(t){
   const i=G.placed.indexOf(t);
   if(i>-1)G.placed[i]=null;
   t.classList.remove('in');
   tray.appendChild(t);
+  t.blur();
 }
 function checkFull(){
   if(G.placed.every(Boolean)){G.busy=true;setTimeout(evaluate,340);}
@@ -512,7 +514,7 @@ function miss(){
   sBad();
   $('#puzzleCard').classList.add('shake');
   const wrong=[];
-  G.placed.forEach((t,i)=>{if(t.dataset.l!==G.ans[i]){wrong.push(i);t.classList.add('lose');}});
+  G.placed.forEach((t,i)=>{if(t&&t.dataset.l!==G.ans[i]){wrong.push(i);t.classList.add('lose');}});
   G.hearts--;renderHearts(G.hearts);
   setTimeout(()=>{
     wrong.forEach(i=>{const t=G.placed[i];if(t){t.classList.remove('lose');returnTile(t);}});
@@ -541,8 +543,8 @@ function levelClear(){
   }
   $('#ovDesc').innerHTML=`Skor Level: <b>${G.levelScore}</b> · Skor Total: <b>${runScore}</b> · Bintang: <b>${st}/3</b>`+(lv<2?`<br>Level <b>${LEVELS[lv+1].name}</b> terbuka!`:'<br>Terima kasih sudah bermain! 🎉');
   const nx=$('#ovNext');
-  if(lv<2){nx.style.display='';nx.textContent=`LANJUT LV.${lv+2} ▸`;nx.onclick=()=>{$('#ovClear').classList.remove('on');startLevel(lv+1);};}
-  else{nx.style.display='';nx.textContent='KE MENU ▸';nx.onclick=()=>{$('#ovClear').classList.remove('on');goHome();};}
+  if(lv<2){nx.textContent=`LANJUT LV.${lv+2} ▸`;nx.onclick=()=>{$('#ovClear').classList.remove('on');startLevel(lv+1);};}
+  else{nx.textContent='KE MENU ▸';nx.onclick=()=>{$('#ovClear').classList.remove('on');goHome();};}
   $('#ovClear').classList.add('on');
   const c=innerWidth/2;
   confetti(c,innerHeight*.3,120);
@@ -679,7 +681,7 @@ const SNIPS=[
    [['t-txt','  });']]]}
 ];
 async function typeLoop(){
-  if(RM){ // versi statis
+  if(RM){ // versi statis jika animasi dimatikan sistem
     $('#edFile').textContent=SNIPS[0].file;
     const box=$('#edText');
     SNIPS[0].lines.forEach(line=>{
